@@ -11,24 +11,22 @@ const Wrapper = styled.div`
 `;
 const ProductImg = styled.img`
   width: 250px;
+  height: 250px;
 `;
 
-const ProductTile = ({ data }) => {
+const ProductTile = ({ data, index }) => {
   return (
     <Wrapper>
       <div className="card">
         <ProductImg
-          src="../static/img1.png"
+          src={`../static/img${index}.png`}
           className="card-img-top product-img"
           alt={data.name}
         />
         <div className="card-body">
           <h5 className="card-title">{data.name}</h5>
-          <p className="card-text">
-            {/* Some quick example text to build on the card title and make up the
-            bulk of the card's content. */}
-          </p>
-          <Link href="/product" >Get Details</Link>
+          <p className="card-text" />
+          <Link href={`/product/${index}`}>Get Details</Link>
         </div>
       </div>
     </Wrapper>

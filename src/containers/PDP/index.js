@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import Specs from "../Specs";
+import Specs from "../../components/Specs";
+
+import { connect } from "react-redux";
+import { getProducts } from "actions/products";
 
 const Wrapper = styled.div`
   //   justify-content: space-around;
@@ -27,36 +30,25 @@ const Button = styled.button`
 `;
 
 class PDP extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      product: {
-        name: "Twin Ion Engine Starfighter",
-        manufacturer: "Sienar Fleet Systems",
-        class: "Starfighter",
-        techspecs: {
-          length: "8.99 m",
-          maxaccel: "4,100 G",
-          MGLT: "100 MGLT",
-          maxatmosphericspeed: "1,200 km/h",
-          hull: "Titanium alloy hull",
-          sensor: "SFS S-c3.8 multi-range TAG",
-          targeting: "SFS T-s8 targeting computer",
-          armament: "SFS L-s1 laser cannons",
-          communications: "AE-35 subspace transceiver"
-        }
-      }
-    };
+  static async getInitialProps({ store, query }) {
+    await store.dispatch(getProducts());
   }
 
   render() {
-    const { product } = this.state;
+    const {
+      router: {
+        query: { id }
+      }
+    } = this.props;
+
+    const product = this.props.products.list[id];
+
     return (
       <div className="container">
         <h1>{product.name}</h1>
         <Wrapper className="row">
           <LeftContainer>
-            <ProductImg src="../../static/img1.png" />
+            <ProductImg src={`../../static/img${id}.png`} />
             <Description>{product.manufacturer} </Description>
             <Description>
               Was selected for the developers! Was selected by the residents
@@ -69,8 +61,10 @@ class PDP extends React.Component {
             </Description>
           </LeftContainer>
           <RightContainer>
-            <Specs title="Tech Specs" data={this.state.product.techspecs} />
-            <Button className="btn btn-primary btn-block">Buy</Button>
+            <Specs title="Tech Specs" data={product.techspecs} />
+            <Button className="btn btn-primary btn-block">
+              {product.price || "Buy"}
+            </Button>
           </RightContainer>
         </Wrapper>
       </div>
@@ -78,4 +72,16 @@ class PDP extends React.Component {
   }
 }
 
-export default PDP;
+function mapStateToProps(state) {
+  return {
+    products: state.products
+  };
+}
+
+export { PDP };
+export default connect(
+  mapStateToProps,
+  {
+    getProducts
+  }
+)(PDP);
